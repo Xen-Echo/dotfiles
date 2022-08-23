@@ -25,6 +25,7 @@ map("n", "<C-UP>", "<C-w><UP>")                                             -- M
 map("n", "<C-DOWN>", "<C-w><DOWN>")                                         -- Move Down
 map("n", "<C-RIGHT>", "<C-w><RIGHT>")                                       -- Move Right
 map("n", "<C-LEFT>", "<C-w><LEFT>")                                         -- Move Left
+map("n", "<M-CR>", "<cmd>lua vim.diagnostic.open_float()<CR>")              -- Diagnostics Float
 
 -- ========================================================= --
 -- Plugin Configuration
