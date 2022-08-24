@@ -277,6 +277,8 @@ nvim_lsp.rust_analyzer.setup({
 
 -- Register Rust LSP
 require('lspconfig')['rust_analyzer'].setup { capabilities = capabilities }
+-- Register TypeScript/JavaScript LSP
+require('lspconfig')['tsserver'].setup { capabilities = capabilities }
 
 -- ========================================================= --
 -- Neovide Config
