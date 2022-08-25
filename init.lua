@@ -1,33 +1,4 @@
 -- ========================================================= --
--- Keybindings
--- ========================================================= --
-
-function map(mode, lhs, rhs, opts)
-    local options = { noremap = true, silent = true }
-    if opts then
-        options = vim.tbl_extend("force", options, opts)
-    end
-    vim.api.nvim_set_keymap(mode, lhs, rhs, options)
-end
-
-map('n', '<Leader>f', ':Telescope find_files<CR>')                          -- Find files
-map('n', '<Leader>ff', ':Telescope live_grep<CR>')                          -- Grep files
-map('n', '<Leader>\\', ':NvimTreeToggle<CR>')                               -- Toggle tree
-map('n', '<Leader>t', '<C-w>s<CR><C-w><DOWN>:resize 10<CR>:terminal<CR>')   -- Open Terminal
-map('n', '<Leader><Left>', ':tabp<CR>')                                     -- Previous Tab
-map('n', '<Leader><Right>', ':tabn<CR>')                                    -- Next Tab
-map("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>")                              -- Clear search
-map("n", "<C-c>", ":q!<CR>")                                                -- Quit
-map("n", "<C-s>", ":w<CR>")                                                 -- Write Normal
-map("i", "<C-s>", "<ESC>:w<CR>a")                                           -- Write Insert
-map("n", "<C-a>", ":%y+<CR>")                                               -- Yank all
-map("n", "<C-UP>", "<C-w><UP>")                                             -- Move Up
-map("n", "<C-DOWN>", "<C-w><DOWN>")                                         -- Move Down
-map("n", "<C-RIGHT>", "<C-w><RIGHT>")                                       -- Move Right
-map("n", "<C-LEFT>", "<C-w><LEFT>")                                         -- Move Left
-map("n", "<M-CR>", "<cmd>lua vim.diagnostic.open_float()<CR>")              -- Diagnostics Float
-
--- ========================================================= --
 -- Plugin Configuration
 -- ========================================================= --
 
@@ -48,15 +19,86 @@ Plug 'kyazdani42/nvim-web-devicons'
 Plug('nvim-treesitter/nvim-treesitter', { ['do'] = vim.fn["nvim-treesitter#TSUpdate"] })
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'nvim-lualine/lualine.nvim'
-Plug('nvim-telescope/telescope.nvim', { tag = '0.1.0' })
+Plug('nvim-telescope/telescope.nvim', { tag = '*' })
 Plug 'nvim-lua/plenary.nvim'
 Plug 'sudormrfbin/cheatsheet.nvim'
--- Features
+Plug 'folke/which-key.nvim'
+Plug('kylechui/nvim-surround', { tag = '*' })
 -- Language Server
 Plug 'neovim/nvim-lspconfig'
 -- Theme
 Plug('EdenEast/nightfox.nvim', { tag = 'v1.0.0' })
 vim.call('plug#end')
+
+-- ========================================================= --
+-- Keybindings
+-- ========================================================= --
+
+function map(mode, lhs, rhs, opts)
+    local options = { noremap = true, silent = true }
+    if opts then
+        options = vim.tbl_extend("force", options, opts)
+    end
+    vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+end
+
+map("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>")       -- Clear search
+map("n", "<C-c>", ":q<CR>")                          -- Quit
+map("n", "<C-s>", ":w<CR>")                          -- Write Normal
+map("i", "<C-s>", "<ESC>:w<CR>a")                    -- Write Insert
+map("n", "<C-a>", ":%y+<CR>")                        -- Yank all
+map("n", "<C-UP>", "<C-w><UP>")                      -- Move Up
+map("n", "<C-DOWN>", "<C-w><DOWN>")                  -- Move Down
+map("n", "<C-RIGHT>", "<C-w><RIGHT>")                -- Move Right
+map("n", "<C-LEFT>", "<C-w><LEFT>")                  -- Move Left
+
+local which_key = require("which-key")
+
+which_key.setup {
+    spelling = {
+      enabled = true,
+      suggestions = 20,
+    }
+}
+
+which_key.register({
+    ["<Leader>"] = { "<CMD>NvimTreeToggle<CR>", "Toggle Tree" },
+    t = { "<C-w>s<CR><C-w><DOWN>:resize 10<CR>:terminal<CR>", "Open Terminal" },
+    w = {
+        name = "window",
+        h = { ":tabp<CR>", "Prev Tab" },
+        l = { ":tabn<CR>", "Next Tab" },
+        n = { ":tabnew<CR>", "New Tab" },
+    },
+    f = {
+        name = "file",
+        f = { "<CMD>Telescope find_files<CR>", "Fuzzy File Search" },
+        r = { "<CMD>Telescope oldfiles<CR>", "Open Recent File" },
+        g = { "<CMD>Telescope live_grep<CR>", "Grep Search Files" }
+    },
+    l = {
+        name = "lsp",
+        f = { "<CMD>lua vim.diagnostic.open_float()<CR>", "Show Diagnostics" },
+        n = { "<CMD>lua vim.lsp.diagnostic.goto_next()<CR>", "Next Diagnostic" },
+        N = { "<CMD>lua vim.lsp.diagnostic.goto_prev()<CR>", "Prev Diagnostic" },
+        d = { "<CMD>lua vim.lsp.buf.definition()<CR>", "Go To Definition" },
+        i = { "<CMD>lua vim.lsp.buf.implementation()<CR>", "Go To Implementation" },
+        q = { "<CMD>lua vim.lsp.buf.signature_help()<CR>", "Signature Help" },
+        r = { "<CMD>lua vim.lsp.buf.rename()<CR>", "Rename" },
+        a = { "<CMD>lua vim.lsp.buf.references()<CR>", "References" },
+        h = { "<CMD>lua vim.lsp.buf.hover()<CR>", "Hover" },
+        c = { "<CMD>lua vim.lsp.buf.code_action()<CR>", "Code Action" },
+        li = { ":LspInfo<CR>", "LSP Info" },
+        lr = { ":LspRestart<CR>", "LSP Restart Server" }
+    }
+}, { prefix = "<Leader>" })
+
+-- ========================================================= --
+-- Surround Config
+-- ========================================================= --
+
+require("nvim-surround").setup({
+})
 
 -- ========================================================= --
 -- Behaviour Settings
