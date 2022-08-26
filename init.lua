@@ -45,7 +45,7 @@ end
 map("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>")       -- Clear search
 map("n", "<C-c>", ":q<CR>")                          -- Quit
 map("n", "<C-s>", ":w<CR>")                          -- Write Normal
-map("i", "<C-s>", "<ESC>:w<CR>a")                    -- Write Insert
+map("i", "<C-s>", "<ESC>:w<CR>")                     -- Write Insert
 map("n", "<C-a>", ":%y+<CR>")                        -- Yank all
 map("n", "<C-UP>", "<C-w><UP>")                      -- Move Up
 map("n", "<C-DOWN>", "<C-w><DOWN>")                  -- Move Down
