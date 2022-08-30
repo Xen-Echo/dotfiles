@@ -51,6 +51,7 @@ map("n", "<C-UP>", "<C-w><UP>")                      -- Move Up
 map("n", "<C-DOWN>", "<C-w><DOWN>")                  -- Move Down
 map("n", "<C-RIGHT>", "<C-w><RIGHT>")                -- Move Right
 map("n", "<C-LEFT>", "<C-w><LEFT>")                  -- Move Left
+map("n", "<C-M-l>", "<cmd>lua vim.lsp.buf.formatting()<CR>")
 
 local which_key = require("which-key")
 
@@ -178,6 +179,8 @@ require('nvim-treesitter.configs').setup {
     }
 }
 
+vim.cmd("set foldmethod=expr")
+
 -- ========================================================= --
 -- Autocompletion 
 -- ========================================================= --
@@ -242,8 +245,7 @@ local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protoco
 
 require("nvim-tree").setup {
     view = {
-        side = 'left',
-        adaptive_size = true
+        side = 'left'
     },
     renderer = {
         indent_markers = {
@@ -321,12 +323,3 @@ nvim_lsp.rust_analyzer.setup({
 require('lspconfig')['rust_analyzer'].setup { capabilities = capabilities }
 -- Register TypeScript/JavaScript LSP
 require('lspconfig')['tsserver'].setup { capabilities = capabilities }
-
--- ========================================================= --
--- Neovide Config
--- ========================================================= --
-
-if vim.g['neovide'] ~= nil then
-    vim.g['neovide_transparency'] = 0.9
-end
-

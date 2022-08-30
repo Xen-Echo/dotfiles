@@ -12,4 +12,8 @@ Show Config: `tmux show -g`
 
 ## Kitty Configuration
 
-`kitty.conf -> ~/.config/kitty/kitty.conf
+`kitty.conf` -> `~/.config/kitty/kitty.conf`
+
+### Ranger Configuration
+
+`rc.conf` -> `~/.config/ranger/rc.conf`
