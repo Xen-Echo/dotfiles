@@ -14,12 +14,12 @@ Plug 'hrsh7th/cmp-nvim-lsp-signature-help'
 Plug 'hrsh7th/cmp-nvim-lua'
 Plug 'hrsh7th/vim-vsnip'
 -- Features
-Plug 'kyazdani42/nvim-tree.lua'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug('nvim-treesitter/nvim-treesitter', { ['do'] = vim.fn["nvim-treesitter#TSUpdate"] })
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'nvim-lualine/lualine.nvim'
 Plug('nvim-telescope/telescope.nvim', { tag = '*' })
+Plug 'nvim-telescope/telescope-file-browser.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'sudormrfbin/cheatsheet.nvim'
 Plug 'folke/which-key.nvim'
@@ -42,16 +42,17 @@ function map(mode, lhs, rhs, opts)
     vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
-map("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>")       -- Clear search
-map("n", "<C-c>", ":q<CR>")                          -- Quit
-map("n", "<C-s>", ":w<CR>")                          -- Write Normal
-map("i", "<C-s>", "<ESC>:w<CR>")                     -- Write Insert
-map("n", "<C-a>", ":%y+<CR>")                        -- Yank all
-map("n", "<C-UP>", "<C-w><UP>")                      -- Move Up
-map("n", "<C-DOWN>", "<C-w><DOWN>")                  -- Move Down
-map("n", "<C-RIGHT>", "<C-w><RIGHT>")                -- Move Right
-map("n", "<C-LEFT>", "<C-w><LEFT>")                  -- Move Left
-map("n", "<C-M-l>", "<cmd>lua vim.lsp.buf.formatting()<CR>")
+map("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>")                 -- Clear search
+map("n", "<C-c>", ":q<CR>")                                    -- Quit
+map("n", "<C-s>", ":w<CR>")                                    -- Write Normal
+map("i", "<C-s>", "<ESC>:w<CR>")                               -- Write Insert
+map("n", "<C-a>", ":%y+<CR>")                                  -- Yank all
+map("n", "<C-UP>", "<C-w><UP>")                                -- Move Up
+map("n", "<C-DOWN>", "<C-w><DOWN>")                            -- Move Down
+map("n", "<C-RIGHT>", "<C-w><RIGHT>")                          -- Move Right
+map("n", "<C-LEFT>", "<C-w><LEFT>")                            -- Move Left
+map("n", "<C-M-l>", "<cmd>lua vim.lsp.buf.formatting()<CR>")   -- Reformat Code
+map("t", "<ESC>", "<Esc><C-\\><C-n>")                          -- Terminal Normal Mode
 
 local which_key = require("which-key")
 
@@ -63,7 +64,7 @@ which_key.setup {
 }
 
 which_key.register({
-    ["<Leader>"] = { "<CMD>NvimTreeToggle<CR>", "Toggle Tree" },
+    ["<Leader>"] = { "<CMD>Telescope find_files<CR>", "Fuzzy File Search" },
     t = { "<C-w>s<CR><C-w><DOWN>:resize 10<CR>:terminal<CR>", "Open Terminal" },
     w = {
         name = "window",
@@ -75,7 +76,8 @@ which_key.register({
         name = "file",
         f = { "<CMD>Telescope find_files<CR>", "Fuzzy File Search" },
         r = { "<CMD>Telescope oldfiles<CR>", "Open Recent File" },
-        g = { "<CMD>Telescope live_grep<CR>", "Grep Search Files" }
+        g = { "<CMD>Telescope live_grep<CR>", "Grep Search Files" },
+        t = { "<CMD>Telescope file_browser<CR>", "Show File Browser" } 
     },
     l = {
         name = "lsp",
@@ -240,21 +242,6 @@ cmp.setup.cmdline(':', {
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- ========================================================= --
--- Tree Config
--- ========================================================= --
-
-require("nvim-tree").setup {
-    view = {
-        side = 'left'
-    },
-    renderer = {
-        indent_markers = {
-            enable = true
-        }
-    }
-}
-
--- ========================================================= --
 -- Status Bar Config
 -- ========================================================= --
 
@@ -280,8 +267,17 @@ require('telescope').setup {
                 ["<C-DOWN>"] = telescope_actions.preview_scrolling_down,
             }
         }
+    },
+    extensions = {
+        file_browser = {
+          theme = "ivy",
+          -- disables netrw and use telescope-file-browser in its place
+              hijack_netrw = true,
+        },
     }
 }
+
+require("telescope").load_extension "file_browser"
 
 -- ========================================================= --
 -- General LSP
