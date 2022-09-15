@@ -21,3 +21,11 @@ Show Config: `tmux show -g`
 ### Windows Terminal Configuration
 
 WindowsTerminal/settings.json -> Dependant on how the terminal was installed, the settings JSON can be set within the application itself.
+
+### Bash Profile
+
+`Bash/.bash_profile -> ~/.bash_profile`
+
+### PowerShell Profile
+
+`PowerShell/Microsoft.PowerShell_profile.ps1 -> /mnt/c/Users/XenEc/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1`
