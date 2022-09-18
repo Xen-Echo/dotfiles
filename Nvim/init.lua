@@ -26,6 +26,7 @@ Plug 'folke/which-key.nvim'
 Plug('kylechui/nvim-surround', { tag = '*' })
 -- Language Server
 Plug 'neovim/nvim-lspconfig'
+Plug 'williamboman/mason.nvim'
 -- Theme
 Plug('EdenEast/nightfox.nvim', { tag = 'v1.0.0' })
 vim.call('plug#end')
@@ -149,6 +150,10 @@ require("indent_blankline").setup {
         "IndentBlanklineIndent5",
         "IndentBlanklineIndent6",
     }
+}
+
+vim.g.markdown_fenced_languages = {
+    "ts=typescript"
 }
 
 -- ========================================================= --
@@ -283,18 +288,16 @@ require("telescope").load_extension "file_browser"
 -- General LSP
 -- ========================================================= --
 
-local nvim_lsp =require('lspconfig')
+local nvim_lsp = require('lspconfig')
 
-local on_lsp_attach = function(client)
-    require'completion'.on_attach(client)
-end
+require("mason").setup()
 
 -- ========================================================= --
 -- Rust LSP
 -- ========================================================= --
 
-nvim_lsp.rust_analyzer.setup({
-    on_attach = on_lsp_attach,
+nvim_lsp.rust_analyzer.setup {
+    capabilities = capabilities,
     settings = {
         ["rust-analyzer"] = {
             imports = {
@@ -313,9 +316,37 @@ nvim_lsp.rust_analyzer.setup({
             },
         }
     }
-})
+}
 
--- Register Rust LSP
-require('lspconfig')['rust_analyzer'].setup { capabilities = capabilities }
--- Register TypeScript/JavaScript LSP
-require('lspconfig')['tsserver'].setup { capabilities = capabilities }
+-- ========================================================= --
+-- JavaScript / TypeScript LSP
+-- ========================================================= --
+
+-- Config is handled with a tsconfig or jsconfig file in the directory
+
+nvim_lsp.tsserver.setup {
+    capabilities = capabilities,
+    root_dir = nvim_lsp.util.root_pattern("package.json")
+}
+
+nvim_lsp.eslint.setup {
+    capabilities = capabilities,
+    root_dir = nvim_lsp.util.root_pattern("package.json")
+}
+
+-- ========================================================= --
+-- JSON LSP
+-- ========================================================= --
+
+nvim_lsp.jsonls.setup {
+    capabilities = capabilities
+}
+
+-- ========================================================= --
+-- Deno LSP
+-- ========================================================= --
+
+nvim_lsp.denols.setup {
+    capabilities = capabilities,
+    root_dir = nvim_lsp.util.root_pattern("deno.json")
+}

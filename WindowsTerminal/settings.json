@@ -134,7 +134,7 @@
                 "icon": "C:\\Users\\XenEc\\Applications\\ArchWSL\\Arch.webp",
                 "name": "Arch",
                 "source": "Windows.Terminal.Wsl",
-                "startingDirectory": "C:\\Users\\XenEc\\Projects"
+                "startingDirectory": "~"
             },
             {
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",

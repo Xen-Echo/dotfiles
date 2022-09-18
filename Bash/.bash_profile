@@ -5,4 +5,6 @@
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
 alias ll="ls -lA"
-alias cdp="cd /mnt/c/Users/XenEc/Projects"
+alias cdp="cd ~/Projects/"
+
+export PATH="$(yarn global bin):$PATH"
