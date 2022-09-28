@@ -16,6 +16,7 @@ Plug 'hrsh7th/vim-vsnip'
 -- Features
 Plug 'kyazdani42/nvim-web-devicons'
 Plug('nvim-treesitter/nvim-treesitter', { ['do'] = vim.fn["nvim-treesitter#TSUpdate"] })
+Plug 'nvim-treesitter/nvim-treesitter-textobjects'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'nvim-lualine/lualine.nvim'
 Plug('nvim-telescope/telescope.nvim', { tag = '*' })
@@ -24,9 +25,11 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'sudormrfbin/cheatsheet.nvim'
 Plug 'folke/which-key.nvim'
 Plug('kylechui/nvim-surround', { tag = '*' })
+Plug 'petertriho/nvim-scrollbar'
 -- Language Server
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
 -- Theme
 Plug('EdenEast/nightfox.nvim', { tag = 'v1.0.0' })
 vim.call('plug#end')
@@ -43,11 +46,14 @@ function map(mode, lhs, rhs, opts)
     vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
-map("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>")                 -- Clear search
-map("n", "<C-c>", ":q<CR>")                                    -- Quit
+map("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>")                 -- Clear Search
+map("n", "<C-c>", ":y*<CR>")                                   -- Copy to Clipboard
+map("v", "<C-c>", "\"*y")                                      -- Copy to Clipboard
 map("n", "<C-s>", ":w<CR>")                                    -- Write Normal
 map("i", "<C-s>", "<ESC>:w<CR>")                               -- Write Insert
-map("n", "<C-a>", ":%y+<CR>")                                  -- Yank all
+map("n", "<C-z>", ":u<CR>")                                    -- Undo Normal
+map("i", "<C-z>", "<ESC>:u<CR>")                               -- Undo Insert
+map("n", "<C-a>", ":%y*<CR>")                                  -- Yank All
 map("n", "<C-UP>", "<C-w><UP>")                                -- Move Up
 map("n", "<C-DOWN>", "<C-w><DOWN>")                            -- Move Down
 map("n", "<C-RIGHT>", "<C-w><RIGHT>")                          -- Move Right
@@ -66,6 +72,7 @@ which_key.setup {
 
 which_key.register({
     ["<Leader>"] = { "<CMD>Telescope find_files<CR>", "Fuzzy File Search" },
+    q = { ":q<CR>", "Exit" },
     t = { "<C-w>s<CR><C-w><DOWN>:resize 10<CR>:terminal<CR>", "Open Terminal" },
     w = {
         name = "window",
@@ -169,6 +176,12 @@ require('nightfox').setup {
 vim.cmd("colorscheme nordfox")
 
 -- ========================================================= --
+-- Scrollbar
+-- ========================================================= --
+
+require("scrollbar").setup()
+
+-- ========================================================= --
 -- Tresitter Config
 -- ========================================================= --
 
@@ -183,10 +196,48 @@ require('nvim-treesitter.configs').setup {
         enable = true,
         extended_mode = true,
         max_file_lines = nil,
-    }
+    },
+    textobjects = {
+        select = {
+            enable = true,
+            lookahead = true,
+            keymaps = {
+                ["af"] = { query = "@function.outer", desc = "Function Outer" },
+                ["if"] = { query = "@function.inner", desc = "Function Inner" },
+                ["ac"] = { query = "@class.outer", desc = "Class Outer" },
+                ["ic"] = { query = "@class.inner", desc = "Class Inner" },
+                ["ab"] = { query = "@block.outer", desc = "Block Inner"  },
+                ["ib"] = { query = "@block.inner", desc = "Block Inner"  }
+            },
+            selection_modes = {
+                ['@parameter.outer'] = 'v', -- Charwise
+                ['@function.outer'] = 'V', -- Linewise
+                ['@class.outer'] = '<c-v>', -- Blockwise
+            },
+            include_surrounding_whitespace = true,
+        },
+        move = {
+            enable = true,
+            set_jumps = true,
+            goto_next_start = {
+                ["]s"] = { query = "@scope.outer", desc = "Next Scope Start" },
+                ["]m"] = { query = "@function.outer", desc = "Next Method Start" },
+            },
+            goto_next_end = {
+                ["]s"] = { query = "@scope.outer", desc = "Next Scope End" },
+                ["]M"] = { query = "@function.outer", desc = "Next Method End" },
+            },
+            goto_previous_start = {
+                ["[s"] = { query = "@scope.outer", desc = "Prev Scope Start" },
+                ["[m"] = { query = "@function.outer", desc = "Prev Method Start" },
+            },
+            goto_previous_end = {
+                ["[S"] = { query = "@scope.outer", desc = "Prev Scope End" },
+                ["[M"] = { query = "@function.outer", desc = "Prev Method End" },
+            }
+        }
+    },
 }
-
-vim.cmd("set foldmethod=expr")
 
 -- ========================================================= --
 -- Autocompletion 
@@ -275,22 +326,20 @@ require('telescope').setup {
     },
     extensions = {
         file_browser = {
-          theme = "ivy",
-          -- disables netrw and use telescope-file-browser in its place
-              hijack_netrw = true,
+          theme = "ivy"
         },
     }
 }
 
-require("telescope").load_extension "file_browser"
+require("telescope").load_extension("file_browser")
 
 -- ========================================================= --
 -- General LSP
 -- ========================================================= --
 
 local nvim_lsp = require('lspconfig')
-
 require("mason").setup()
+require("mason-lspconfig").setup()
 
 -- ========================================================= --
 -- Rust LSP
