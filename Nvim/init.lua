@@ -26,6 +26,14 @@ Plug 'sudormrfbin/cheatsheet.nvim'
 Plug 'folke/which-key.nvim'
 Plug('kylechui/nvim-surround', { tag = '*' })
 Plug 'petertriho/nvim-scrollbar'
+Plug 'FraserLee/ScratchPad'
+Plug 'voldikss/vim-floaterm'
+Plug 'folke/todo-comments.nvim'
+Plug 'ziontee113/color-picker.nvim'
+Plug 'norcalli/nvim-colorizer.lua'
+Plug 'folke/trouble.nvim'
+Plug 'RRethy/vim-illuminate'
+Plug 'jbyuki/venn.nvim'
 -- Language Server
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/mason.nvim'
@@ -46,20 +54,20 @@ function map(mode, lhs, rhs, opts)
     vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
-map("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>")                 -- Clear Search
-map("n", "<C-c>", ":y*<CR>")                                   -- Copy to Clipboard
-map("v", "<C-c>", "\"*y")                                      -- Copy to Clipboard
-map("n", "<C-s>", ":w<CR>")                                    -- Write Normal
-map("i", "<C-s>", "<ESC>:w<CR>")                               -- Write Insert
-map("n", "<C-z>", ":u<CR>")                                    -- Undo Normal
-map("i", "<C-z>", "<ESC>:u<CR>")                               -- Undo Insert
-map("n", "<C-a>", ":%y*<CR>")                                  -- Yank All
-map("n", "<C-UP>", "<C-w><UP>")                                -- Move Up
-map("n", "<C-DOWN>", "<C-w><DOWN>")                            -- Move Down
-map("n", "<C-RIGHT>", "<C-w><RIGHT>")                          -- Move Right
-map("n", "<C-LEFT>", "<C-w><LEFT>")                            -- Move Left
-map("n", "<C-M-l>", "<cmd>lua vim.lsp.buf.formatting()<CR>")   -- Reformat Code
-map("t", "<ESC>", "<Esc><C-\\><C-n>")                          -- Terminal Normal Mode
+map("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>")                          -- Clear Search
+map("n", "<C-c>", ":y*<CR>")                                            -- Copy to Clipboard
+map("v", "<C-c>", "\"*y")                                               -- Copy to Clipboard
+map("n", "<C-s>", ":w<CR>")                                             -- Write Normal
+map("i", "<C-s>", "<ESC>:w<CR>")                                        -- Write Insert
+map("n", "<C-z>", ":u<CR>")                                             -- Undo Normal
+map("i", "<C-z>", "<ESC>:u<CR>")                                        -- Undo Insert
+map("n", "<C-a>", ":%y*<CR>")                                           -- Yank All
+map("n", "<C-UP>", "<C-w><UP>")                                         -- Move Up
+map("n", "<C-DOWN>", "<C-w><DOWN>")                                     -- Move Down
+map("n", "<C-RIGHT>", "<C-w><RIGHT>")                                   -- Move Right
+map("n", "<C-LEFT>", "<C-w><LEFT>")                                     -- Move Left
+map("n", "<C-M-l>", "<cmd>lua vim.lsp.buf.formatting()<CR>")            -- Reformat Code
+map("v", "<C-x>", ":'<,'>!PowerShell -NoLogo -NonInteractive<CR>")      -- Execute Selection
 
 local which_key = require("which-key")
 
@@ -73,25 +81,46 @@ which_key.setup {
 which_key.register({
     ["<Leader>"] = { "<CMD>Telescope find_files<CR>", "Fuzzy File Search" },
     q = { ":q<CR>", "Exit" },
-    t = { "<C-w>s<CR><C-w><DOWN>:resize 10<CR>:terminal<CR>", "Open Terminal" },
+    e = {
+        name = "Editor",
+        cc = { ":ColorizerToggle<CR>", "Toggle Colourizer" },
+        cp = { ":PickColor<CR>", "Colour Picker" },
+        n = { "<CMD>lua require('todo-comments').jump_next()<CR>", "Next TODO" },
+        p = { "<CMD>lua require('todo-comments').jump_prev()<CR>", "Prev TODO" },
+        t = { ":TodoTelescope<CR>", "Telescope TODO" },
+        q = { ":TodoQuickFix<CR>", "Quickfix TODO" },
+        e = { ":TroubleToggle<CR>", "Code Analysis" },
+        v = { "<CMD>lua toggle_venn()<CR>", "Diagram" }
+    },
+    t = {
+        name = "Terminal",
+        t = { ":FloatermToggle<CR>", "Toggle Terminal" },
+        n = { ":FloatermNew --name=node node<CR>", "Node Repl" },
+        d = { ":FloatermNew --name=deno deno<CR>", "Deno Repl" },
+        p = { ":FloatermNew --name=python python<CR>", "Python Repl" },
+        k = { ":FloatermKill<CR>", "Close Terminal" },
+        ["["] = { ":FloatermPrev<CR>", "Previous Terminal" },
+        ["]"] = { ":FloatermNext<CR>", "Next Terminal" }
+    },
     w = {
-        name = "window",
+        name = "Window",
         h = { ":tabp<CR>", "Prev Tab" },
         l = { ":tabn<CR>", "Next Tab" },
         n = { ":tabnew<CR>", "New Tab" },
+        s = { ":ScratchPad<CR>", "Scratch Pad" }
     },
     f = {
-        name = "file",
+        name = "File",
         f = { "<CMD>Telescope find_files<CR>", "Fuzzy File Search" },
         r = { "<CMD>Telescope oldfiles<CR>", "Open Recent File" },
         g = { "<CMD>Telescope live_grep<CR>", "Grep Search Files" },
         t = { "<CMD>Telescope file_browser<CR>", "Show File Browser" } 
     },
     l = {
-        name = "lsp",
+        name = "LSP",
         f = { "<CMD>lua vim.diagnostic.open_float()<CR>", "Show Diagnostics" },
         n = { "<CMD>lua vim.lsp.diagnostic.goto_next()<CR>", "Next Diagnostic" },
-        N = { "<CMD>lua vim.lsp.diagnostic.goto_prev()<CR>", "Prev Diagnostic" },
+        p = { "<CMD>lua vim.lsp.diagnostic.goto_prev()<CR>", "Prev Diagnostic" },
         d = { "<CMD>lua vim.lsp.buf.definition()<CR>", "Go To Definition" },
         i = { "<CMD>lua vim.lsp.buf.implementation()<CR>", "Go To Implementation" },
         q = { "<CMD>lua vim.lsp.buf.signature_help()<CR>", "Signature Help" },
@@ -101,15 +130,78 @@ which_key.register({
         c = { "<CMD>lua vim.lsp.buf.code_action()<CR>", "Code Action" },
         li = { ":LspInfo<CR>", "LSP Info" },
         lr = { ":LspRestart<CR>", "LSP Restart Server" }
-    }
+    },
 }, { prefix = "<Leader>" })
+
+-- ========================================================= --
+-- Venn
+-- ========================================================= --
+
+--[[
+   ┌──────┐           ┌───────┐
+   │ Test ├──Invoke──►│ Hello │
+   └──────┘           └───────┘
+]]--
+
+function _G.toggle_venn()
+    local venn_enabled = vim.inspect(vim.b.venn_enabled)
+    if venn_enabled == "nil" then
+        vim.b.venn_enabled = true
+        vim.cmd[[setlocal ve=all]]
+        -- Draw a line on HJKL keystokes
+        vim.api.nvim_buf_set_keymap(0, "n", "J", "<C-v>j:VBox<CR>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n", "K", "<C-v>k:VBox<CR>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n", "L", "<C-v>l:VBox<CR>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n", "H", "<C-v>h:VBox<CR>", {noremap = true})
+        -- Draw a box by pressing "f" with visual selection
+        vim.api.nvim_buf_set_keymap(0, "v", "f", ":VBox<CR>", {noremap = true})
+    else
+        vim.cmd[[setlocal ve=]]
+        vim.cmd[[mapclear <buffer>]]
+        vim.b.venn_enabled = nil
+    end
+end
+
+-- ========================================================= --
+-- Todo Comments
+-- ========================================================= --
+
+-- TODO: Test 
+-- HACK: Test
+-- BUG: Test
+-- PERF: Test
+-- NOTE: Test
+-- WARNING: Test
+
+require("todo-comments").setup {
+    colors = {
+        error = { "#E06C75" },
+        warning = { "#E5C07B" },
+        info = { "#61AFEF" },
+        hint = { "#98C379" },
+        default = {  "#61AFEF" },
+        test = { "#C678DD" }
+    }
+}
+
+-- ========================================================= --
+-- Floaterm
+-- ========================================================= --
+
+vim.g["floaterm_shell"] = "PowerShell"
+vim.g["floaterm_autoinsert"] = false
 
 -- ========================================================= --
 -- Surround Config
 -- ========================================================= --
 
-require("nvim-surround").setup({
-})
+require("nvim-surround").setup()
+
+-- ========================================================= --
+-- ScratchPad Config
+-- ========================================================= --
+
+vim.g["scratchpad_autostart"] = 0
 
 -- ========================================================= --
 -- Behaviour Settings
@@ -176,10 +268,34 @@ require('nightfox').setup {
 vim.cmd("colorscheme nordfox")
 
 -- ========================================================= --
+-- Vim Illuminate
+-- ========================================================= --
+
+require('illuminate').configure()
+
+-- ========================================================= --
 -- Scrollbar
 -- ========================================================= --
 
 require("scrollbar").setup()
+
+-- ========================================================= --
+-- Colour Picker
+-- ========================================================= --
+
+require("color-picker").setup()
+
+-- ========================================================= --
+-- Colorizer
+-- ========================================================= --
+
+require('colorizer').setup()
+
+-- ========================================================= --
+-- Trouble
+-- ========================================================= --
+
+require("trouble").setup()
 
 -- ========================================================= --
 -- Tresitter Config
