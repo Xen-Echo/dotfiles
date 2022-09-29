@@ -34,6 +34,7 @@ Plug 'norcalli/nvim-colorizer.lua'
 Plug 'folke/trouble.nvim'
 Plug 'RRethy/vim-illuminate'
 Plug 'jbyuki/venn.nvim'
+Plug 'sindrets/diffview.nvim'
 -- Language Server
 Plug 'neovim/nvim-lspconfig'
 Plug 'williamboman/mason.nvim'
@@ -90,7 +91,9 @@ which_key.register({
         t = { ":TodoTelescope<CR>", "Telescope TODO" },
         q = { ":TodoQuickFix<CR>", "Quickfix TODO" },
         e = { ":TroubleToggle<CR>", "Code Analysis" },
-        v = { "<CMD>lua toggle_venn()<CR>", "Diagram" }
+        v = { "<CMD>lua toggle_venn()<CR>", "Diagram" },
+        gd = { ":DiffviewOpen<CR>", "Open Diff" },
+        gc = { ":DiffviewClose<CR>", "Close Diff" },
     },
     t = {
         name = "Terminal",
